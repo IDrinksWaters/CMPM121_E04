@@ -1,5 +1,49 @@
 /* Neon Warden: the HUD panels tilt toward the screen like an arcade cabinet. */
 
+/* Shared design values for the Neon Warden cabinet. */
+:root {
+  /* Colors */
+  --color-background: #04020c;
+  --color-background-glow: #1a0f3a;
+  --color-panel: rgba(14, 10, 34, 0.86);
+  --color-panel-banner: rgba(14, 10, 34, 0.9);
+  --color-caption-background: rgba(4, 2, 12, 0.75);
+  --color-text: #e8fdff;
+  --color-cyan: #5ef2ff;
+  --color-muted: #6f86a8;
+  --color-gold: #ffe066;
+  --color-pink: #ff5ea8;
+  --color-danger: #ff4d6d;
+  --color-cyan-border: rgba(94, 242, 255, 0.35);
+
+  --panel-edge: color-mix(in srgb, var(--color-cyan) 35%, transparent);
+  --panel-glow: color-mix(in srgb, var(--color-cyan) 15%, transparent);
+  --panel-inset-glow: color-mix(in srgb, var(--color-cyan) 8%, transparent);
+  --screen-glow: color-mix(in srgb, var(--color-cyan) 20%, transparent);
+
+  /* Shared effects */
+  --glow-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  --panel-glow-shadow: 0 0 24px rgba(94, 242, 255, 0.15),
+    inset 0 0 18px rgba(94, 242, 255, 0.08);
+  --screen-glow-shadow: 0 0 0 2px var(--color-cyan-border),
+    0 0 40px rgba(94, 242, 255, 0.2);
+
+  /* Font stacks */
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-display: Orbitron, "Trebuchet MS", sans-serif;
+
+  /* Layout dimensions */
+  --panel-width: 190px;
+  --screen-width: 480px;
+  --screen-height: 640px;
+  --panel-tilt: 24deg;
+  --panel-overlap: 18px;
+  --layout-gap: 14px;
+  --small-gap: 6px;
+  --item-gap: 10px;
+  --corner-radius: 10px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -9,15 +53,17 @@ body {
   min-height: 100vh;
   display: grid;
   place-content: center;
-  gap: 14px;
-  background: radial-gradient(ellipse at 50% 30%, #1a0f3a, #04020c 70%);
-  color: #e8fdff;
-  font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  gap: var(--layout-gap);
+  background: radial-gradient(ellipse at 50% 30%, var(--color-background-glow),
+    var(--color-background) 70%);
+  color: var(--color-text);
+  font-family: var(--font-mono);
 }
 
 .cabinet {
   display: grid;
-  grid-template-columns: 190px 480px 190px;
+  grid-template-columns: var(--panel-width) var(--screen-width)
+    var(--panel-width);
   align-items: center;
   perspective: 900px;
 }
@@ -26,26 +72,25 @@ body {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 14px;
+  gap: var(--layout-gap);
   padding: 14px;
-  border: 1px solid rgba(94, 242, 255, 0.35);
-  border-radius: 10px;
-  background: rgba(14, 10, 34, 0.86);
-  box-shadow: 0 0 24px rgba(94, 242, 255, 0.15), inset 0 0 18px rgba(94, 242,
-    255, 0.08);
+  border: 1px solid var(--color-cyan-border);
+  border-radius: var(--corner-radius);
+  background: var(--color-panel);
+  box-shadow: var(--panel-glow-shadow);
   transition: opacity 400ms, transform 400ms;
 }
 
 /* Each panel swings toward the screen and slightly overlaps its edge. */
 .panel-left {
   transform-origin: right center;
-  transform: translateX(18px) rotateY(24deg);
+  transform: translateX(var(--panel-overlap)) rotateY(var(--panel-tilt));
 }
 
 .panel-right {
   transform-origin: left center;
-  transform: translateX(-18px) rotateY(calc(-1 *
-    24deg));
+  transform: translateX(calc(-1 * var(--panel-overlap)))
+    rotateY(calc(-1 * var(--panel-tilt)));
 }
 
 .cabinet[data-mode="title"] .panel,
@@ -55,27 +100,27 @@ body {
 
 h2 {
   margin: 0 0 4px;
-  font: 600 11px/1 Orbitron, "Trebuchet MS", sans-serif;
+  font: 600 11px/1 var(--font-display);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #6f86a8;
+  color: var(--color-muted);
 }
 
 output {
   font-size: 22px;
-  color: #5ef2ff;
-  text-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  color: var(--color-cyan);
+  text-shadow: var(--glow-shadow);
 }
 
 #best {
   font-size: 15px;
-  color: #ffe066;
+  color: var(--color-gold);
 }
 
 .pips,
 .cells {
   display: flex;
-  gap: 6px;
+  gap: var(--small-gap);
 }
 
 .pip,
@@ -87,17 +132,17 @@ output {
 }
 
 .pip {
-  color: #ff5ea8;
+  color: var(--color-pink);
 }
 
 .cell {
-  color: #ffe066;
+  color: var(--color-gold);
 }
 
 .pip.lit,
 .cell.lit {
   opacity: 1;
-  box-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  box-shadow: var(--glow-shadow);
 }
 
 .cell.lit {
@@ -108,11 +153,11 @@ output {
   display: none;
   margin: 0;
   padding: 4px 8px;
-  border: 1px solid #ffe066;
-  border-radius: 10px;
-  color: #ffe066;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--corner-radius);
+  color: var(--color-gold);
   text-align: center;
-  font: 600 11px/1.4 Orbitron, "Trebuchet MS", sans-serif;
+  font: 600 11px/1.4 var(--font-display);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   animation: blink 1.2s steps(2) infinite;
@@ -124,12 +169,11 @@ output {
 
 .screen {
   position: relative;
-  width: 480px;
-  height: 640px;
-  border-radius: 10px;
+  width: var(--screen-width);
+  height: var(--screen-height);
+  border-radius: var(--corner-radius);
   overflow: hidden;
-  box-shadow: 0 0 0 2px rgba(94, 242, 255, 0.35), 0 0 40px rgba(94, 242, 255,
-    0.2);
+  box-shadow: var(--screen-glow-shadow);
 }
 
 #game,
@@ -144,19 +188,19 @@ output {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: var(--item-gap);
 }
 
 .stop {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--item-gap);
   font-size: 12px;
-  color: #6f86a8;
+  color: var(--color-muted);
 }
 
 .stop[data-state="cleared"] {
-  color: #5ef2ff;
+  color: var(--color-cyan);
 }
 
 .stop[data-state="cleared"] .stop-dot {
@@ -164,8 +208,8 @@ output {
 }
 
 .stop[data-state="current"] {
-  color: #ffe066;
-  text-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  color: var(--color-gold);
+  text-shadow: var(--glow-shadow);
 }
 
 .stop[data-state="current"] .stop-dot {
@@ -173,11 +217,11 @@ output {
 }
 
 .stop:last-child {
-  color: #ff4d6d;
+  color: var(--color-danger);
 }
 
 .boss {
-  color: #ff4d6d;
+  color: var(--color-danger);
 }
 
 .boss h2 {
@@ -195,7 +239,7 @@ output {
   display: block;
   height: 100%;
   background: currentColor;
-  box-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  box-shadow: var(--glow-shadow);
   transform-origin: left;
   transform: scaleX(var(--fill));
   transition: transform 120ms linear;
@@ -206,10 +250,11 @@ output {
   position: absolute;
   inset: 22% -6% auto;
   display: grid;
-  gap: 6px;
+  gap: var(--small-gap);
   padding: 14px;
   text-align: center;
-  background: linear-gradient(90deg, transparent, rgba(14, 10, 34, 0.9) 20% 80%,
+  background: linear-gradient(90deg, transparent, var(--color-panel-banner) 20%
+    80%,
     transparent);
   pointer-events: none;
   opacity: 0;
@@ -221,17 +266,17 @@ output {
 }
 
 .banner strong {
-  font: 700 26px/1.1 Orbitron, "Trebuchet MS", sans-serif;
+  font: 700 26px/1.1 var(--font-display);
   letter-spacing: 0.12em;
-  color: #ffe066;
-  text-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+  color: var(--color-gold);
+  text-shadow: var(--glow-shadow);
 }
 
 .banner span {
   font-size: 13px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #e8fdff;
+  color: var(--color-text);
 }
 
 .caption {
@@ -239,8 +284,8 @@ output {
   inset: auto 8% 6%;
   margin: 0;
   padding: 10px 14px;
-  border-left: 3px solid #5ef2ff;
-  background: rgba(4, 2, 12, 0.75);
+  border-left: 3px solid var(--color-cyan);
+  background: var(--color-caption-background);
   font-size: 14px;
   line-height: 1.5;
   opacity: 0;
@@ -257,7 +302,7 @@ output {
   margin: 0;
   text-align: center;
   font-size: 12px;
-  color: #6f86a8;
+  color: var(--color-muted);
 }
 
 /* Impacts shake the whole cabinet; the panels keep their tilt while shaking. */
@@ -313,7 +358,7 @@ output {
 
 @keyframes pulse {
   to {
-    box-shadow: 0 0 6px currentColor, 0 0 18px currentColor;
+    box-shadow: var(--glow-shadow);
     background: currentColor;
   }
 }
@@ -327,7 +372,7 @@ output {
 /* Narrow windows: stack the panels flat above and below the screen. */
 @media (max-width: 920px) {
   .cabinet {
-    grid-template-columns: 480px;
+    grid-template-columns: var(--screen-width);
   }
 
   .panel {
