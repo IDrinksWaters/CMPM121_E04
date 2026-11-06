@@ -60,6 +60,26 @@ body {
   font-family: var(--font-mono);
 }
 
+.stop-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.pip {
+  width: 22px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: currentColor;
+  color: var(--color-pink);
+}
+
+.cell {
+  flex: 1;
+  border-radius: 2px;
+  color: var(--color-gold);
+}
+
 .cabinet {
   display: grid;
   grid-template-columns: var(--panel-width) var(--screen-width)
