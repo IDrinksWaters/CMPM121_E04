@@ -1,4 +1,4 @@
-import type { GameScene } from "./game.ts";
+import Phaser from "phaser";
 import { Enemy } from "./actors.ts";
 
 export interface Wave {
@@ -21,7 +21,11 @@ export interface Sector {
   waves: Wave[];
 }
 
-export function spawnWave(scene: GameScene, t: number, wave: Wave): void {
+export function spawnWave(
+  scene: Phaser.Scene & { enemies: Enemy[] },
+  t: number,
+  wave: Wave,
+): void {
   for (let i = 0; i < wave.count; i++) {
     let spawnTime = wave.time;
     let x = 0;
