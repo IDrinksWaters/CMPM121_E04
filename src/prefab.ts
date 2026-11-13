@@ -5,12 +5,34 @@ function aim(from: { x: number; y: number }, arena: Arena): number {
   return Math.atan2(arena.player.y - from.y, arena.player.x - from.x);
 }
 
+export interface PrefabRecord {
+  hp: number;
+  score: number;
+  radius: number;
+  dropChance: number;
+}
+
+export const PREFAB_RECORDS: Record<string, PrefabRecord> = {
+  drone: { hp: 2, score: 100, radius: 13, dropChance: 0.015 },
+  dart: { hp: 1, score: 150, radius: 12, dropChance: 0.015 },
+  turret: { hp: 12, score: 400, radius: 19, dropChance: 0.3 },
+  lancer: { hp: 4, score: 250, radius: 15, dropChance: 0.06 },
+  boss: { hp: 900, score: 10000, radius: 46, dropChance: 0 },
+  spread: { hp: 0, score: 0, radius: 14, dropChance: 0 },
+  shield: { hp: 0, score: 0, radius: 14, dropChance: 0 },
+};
+
 /**
  * Base class for everything the player can shoot or pick up: enemies, the
  * boss and power-ups. kind is the prefab's name and also its texture key.
  */
 export class ShmupPrefabSprite extends Actor {
+  hp: number;
   maxHp: number;
+  score: number;
+  dropChance: number;
+  canShoot: boolean;
+  isPickup: boolean;
   flash = 0;
   heading = 0;
   // spin: turrets rotate using this
@@ -21,17 +43,19 @@ export class ShmupPrefabSprite extends Actor {
     x: number,
     y: number,
     public kind: string,
-    public hp: number,
-    public score: number,
-    radius: number,
-    public dropChance: number,
-    public canShoot: boolean,
-    public isPickup: boolean,
     public homeX: number,
     public side: number,
   ) {
-    super(scene, x, y, kind, radius);
-    this.maxHp = hp;
+    const record = PREFAB_RECORDS[kind] ??
+      { hp: 1, score: 0, radius: 12, dropChance: 0 };
+    super(scene, x, y, kind, record.radius);
+    this.hp = record.hp;
+    this.maxHp = record.hp;
+    this.score = record.score;
+    this.dropChance = record.dropChance;
+    this.canShoot = kind === "drone" || kind === "turret" ||
+      kind === "lancer" || kind === "boss";
+    this.isPickup = kind === "spread" || kind === "shield";
   }
 
   step(arena: Arena): void {
@@ -126,12 +150,6 @@ export class ShmupBoss extends ShmupPrefabSprite {
       WIDTH / 2,
       -90,
       "boss",
-      900,
-      10000,
-      46,
-      0,
-      true,
-      false,
       WIDTH / 2,
       1,
     );
@@ -208,8 +226,8 @@ export class ShmupBoss extends ShmupPrefabSprite {
 }
 
 export class ShmupPowerUp extends ShmupPrefabSprite {
-  constructor(scene: Phaser.Scene, x: number, y: number, kind) {
-    super(scene, x, y, kind, 0, 0, 14, 0, false, true, x, 1);
+  constructor(scene: Phaser.Scene, x: number, y: number, kind: string) {
+    super(scene, x, y, kind, x, 1);
   }
 
   override step(): void {

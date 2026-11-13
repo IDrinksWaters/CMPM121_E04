@@ -21,15 +21,7 @@ export interface Sector {
   waves: Wave[];
 }
 
-const STATS = {
-  drone: { hp: 2, speed: 100, radius: 13, dropChance: 0.015, turning: true },
-  dart: { hp: 1, speed: 150, radius: 12, dropChance: 0.015, turning: false },
-  turret: { hp: 12, speed: 400, radius: 19, dropChance: 0.3, turning: true },
-  lancer: { hp: 4, speed: 250, radius: 15, dropChance: 0.06, turning: true },
-};
-
 export function spawnWave(scene: GameScene, t: number, wave: Wave): void {
-  const stats = STATS[wave.kind];
   for (let i = 0; i < wave.count; i++) {
     let spawnTime = wave.time;
     let x = 0;
@@ -64,12 +56,6 @@ export function spawnWave(scene: GameScene, t: number, wave: Wave): void {
         x,
         y,
         wave.kind,
-        stats.hp,
-        stats.speed,
-        stats.radius,
-        stats.dropChance,
-        stats.turning,
-        false,
         x,
         i % 2 === 0 ? 1 : -1,
       );
