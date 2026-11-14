@@ -1,11 +1,14 @@
 import Phaser from "phaser";
 import { Enemy } from "./actors.ts";
 
+export type WaveKind = "drone" | "dart" | "turret" | "lancer";
+export type WaveFormation = "line" | "vee" | "column" | "pincer";
+
 export interface Wave {
   time: number;
-  kind: "drone" | "dart" | "turret" | "lancer";
+  kind: WaveKind;
   count: number;
-  formation: "line" | "vee" | "column" | "pincer";
+  formation: WaveFormation;
   startX?: number;
   spacing?: number;
   centerX?: number;

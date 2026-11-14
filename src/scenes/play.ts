@@ -24,20 +24,22 @@ const START_LIVES = 3;
 const BOSS_WARNING_TICKS = 200;
 const VICTORY_TICKS = 180;
 
+export interface RunState {
+  score: number;
+  lives: number;
+  kills: number;
+  hits: number;
+  continues: number;
+  bossDefeated?: boolean;
+}
+
 export class PlayScene extends Phaser.Scene implements Arena {
   mode = "play";
   rng!: Rng;
   player!: Player;
   now = 0;
   enemies: (Enemy | Boss)[] = [];
-  private run!: {
-    score: number;
-    lives: number;
-    kills: number;
-    hits: number;
-    continues: number;
-    bossDefeated?: boolean;
-  };
+  private run!: RunState;
   private options!: LaunchOptions;
   private hud!: Hud;
   private pilot!: Pilot;
@@ -63,14 +65,7 @@ export class PlayScene extends Phaser.Scene implements Arena {
     data: {
       mode?: string;
       options?: LaunchOptions;
-      run?: {
-        score: number;
-        lives: number;
-        kills: number;
-        hits: number;
-        continues: number;
-        bossDefeated?: boolean;
-      };
+      run?: RunState;
     },
   ): void {
     this.mode = data?.mode ?? "play";
